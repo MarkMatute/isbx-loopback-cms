@@ -24,6 +24,7 @@ angular.module('dashboard.Dashboard.Model.List', [
 
 .controller('ModelListCtrl', function ModelListCtrl($scope, $cookies, $timeout, $state, $location, $window, $modal, Config, GeneralModelService, CacheService, $q) {
   var isFirstLoad = true;
+  var byPassFirstLoad = false;
   var modalInstance = null;
 
   function init() {
@@ -37,6 +38,7 @@ angular.module('dashboard.Dashboard.Model.List', [
     $scope.totalServerItems = 0;
     $scope.isEditing = false;
     $scope.searchFields = $scope.action.options.searchFields;
+    byPassFirstLoad = $scope.action.options.byPassFirstLoad ? $scope.action.options.byPassFirstLoad : false;
     if ($scope.action.options.sort) {
         //Custom Sort Override
         $scope.sortInfo = $scope.action.options.sort;
@@ -735,7 +737,9 @@ angular.module('dashboard.Dashboard.Model.List', [
   $scope.$watch('sortInfo', function (newVal, oldVal) {
     //Check isFirstLoad so that this watch statement does not get called when the page loads for the first time
     if (!isFirstLoad && newVal !== oldVal) {
-      $scope.loadItems();
+      if (!byPassFirstLoad) {
+        $scope.loadItems();
+      }
     }
   }, true);
 
